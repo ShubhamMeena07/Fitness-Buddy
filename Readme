@@ -1,0 +1,576 @@
+# Fitness Buddy API 🏋️‍♂️
+
+A comprehensive backend API for the Fitness Buddy application - an AI-powered fitness tracking platform built with Node.js, Express, TypeScript, and MongoDB.
+
+![Fitness Buddy API](https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&w=1200&h=400&fit=crop)
+
+## ✨ Features
+
+### 🔐 Authentication & Security
+- **JWT Authentication** - Secure token-based authentication
+- **Password Hashing** - bcrypt with salt rounds for secure password storage
+- **Rate Limiting** - Protection against brute force attacks
+- **CORS Configuration** - Secure cross-origin resource sharing
+- **Input Validation** - Comprehensive Zod schema validation
+- **Security Headers** - Helmet.js for security best practices
+
+### 📊 Health Metrics & Calculations
+- **BMI Calculation** - Body Mass Index with WHO categories
+- **WHR Analysis** - Waist-to-Hip Ratio with risk assessment
+- **WHtR Calculation** - Waist-to-Height Ratio analysis
+- **BMR Computation** - Mifflin-St Jeor equation for metabolic rate
+- **TDEE Estimation** - Total Daily Energy Expenditure based on activity
+- **Automatic Derivation** - Real-time calculation of health metrics
+
+### 🤖 AI-Powered Coaching
+- **Smart Analysis** - Analyzes 7-30 days of user data
+- **Personalized Tips** - Context-aware fitness and nutrition suggestions
+- **Goal-Oriented** - Recommendations based on user's fitness goals
+- **Health Insights** - BMI, WHR, and activity pattern analysis
+- **Motivational Support** - Encouraging and actionable advice
+
+### 📱 Comprehensive API
+- **User Management** - Registration, login, profile updates
+- **Daily Logging** - Food, workouts, water, body metrics tracking
+- **Historical Data** - Date range queries and trend analysis
+- **Data Validation** - Robust input validation and error handling
+- **RESTful Design** - Clean, intuitive API endpoints
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js** (v18 or higher) - [Download here](https://nodejs.org/)
+- **MongoDB Atlas Account** - [Sign up here](https://www.mongodb.com/atlas)
+- **Git** - [Download here](https://git-scm.com/)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/fitness-buddy-api.git
+   cd fitness-buddy-api
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit `.env` with your configuration:
+   ```env
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/fitness-buddy
+   JWT_SECRET=your-super-secret-jwt-key-here-make-it-long-and-random
+   PORT=5000
+   NODE_ENV=development
+   CORS_ORIGIN=http://localhost:5173
+   ```
+
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Verify installation**
+   ```bash
+   curl http://localhost:5000/health
+   ```
+
+The API will be running at `http://localhost:5000` 🎉
+
+## 🗃️ Database Setup
+
+### MongoDB Atlas Configuration
+
+1. **Create MongoDB Atlas Account**
+   - Go to [MongoDB Atlas](https://www.mongodb.com/atlas)
+   - Sign up for a free account
+
+2. **Create a New Cluster**
+   - Choose the free tier (M0 Sandbox)
+   - Select your preferred cloud provider and region
+   - Name your cluster (e.g., "fitness-buddy-cluster")
+
+3. **Configure Database Access**
+   - Go to "Database Access" in the left sidebar
+   - Click "Add New Database User"
+   - Choose "Password" authentication
+   - Create a username and secure password
+   - Grant "Read and write to any database" privileges
+
+4. **Configure Network Access**
+   - Go to "Network Access" in the left sidebar
+   - Click "Add IP Address"
+   - For development: Click "Allow Access from Anywhere" (0.0.0.0/0)
+   - For production: Add your server's specific IP address
+
+5. **Get Connection String**
+   - Go to "Clusters" and click "Connect"
+   - Choose "Connect your application"
+   - Copy the connection string
+   - Replace `<password>` with your database user password
+   - Replace `<dbname>` with "fitness-buddy"
+
+6. **Update Environment Variables**
+   ```env
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/fitness-buddy?retryWrites=true&w=majority
+   ```
+
+## 📁 Project Structure
+
+```
+fitness-buddy-api/
+├── src/
+│   ├── index.ts              # Main application entry point
+│   ├── env.ts                # Environment configuration
+│   ├── db.ts                 # MongoDB connection setup
+│   ├── middleware/
+│   │   └── auth.ts           # JWT authentication middleware
+│   ├── models/
+│   │   ├── User.ts           # User data model
+│   │   ├── DailyLog.ts       # Daily log data model
+│   │   └── AITips.ts         # AI tips data model
+│   ├── routes/
+│   │   ├── auth.ts           # Authentication endpoints
+│   │   ├── me.ts             # User profile endpoints
+│   │   ├── logs.ts           # Daily log endpoints
+│   │   └── ai.ts             # AI coach endpoints
+│   └── utils/
+│       ├── metrics.ts        # Health calculation utilities
+│       └── metrics.test.ts   # Unit tests for metrics
+├── postman/
+│   └── Fitness-Buddy-API.postman_collection.json
+├── package.json
+├── tsconfig.json
+├── jest.config.js
+├── .env.example
+└── README.md
+```
+
+## 🔌 API Endpoints
+
+### Authentication
+```http
+POST /auth/register    # Register new user
+POST /auth/login       # User login
+```
+
+### Profile Management
+```http
+GET  /me              # Get user profile
+PUT  /me              # Update user profile
+```
+
+### Daily Logs
+```http
+POST   /logs                    # Create/update daily log
+GET    /logs                    # Get all logs
+GET    /logs?from=DATE&to=DATE  # Get logs by date range
+GET    /logs/:date              # Get specific date log
+DELETE /logs/:date              # Delete specific date log
+```
+
+### AI Coach
+```http
+POST /ai/suggest      # Generate AI suggestions
+GET  /ai/tips         # Get recent AI tips
+```
+
+### Health Check
+```http
+GET /health           # API health status
+```
+
+## 📊 Data Models
+
+### User Model
+```typescript
+{
+  _id: ObjectId,
+  name: string,
+  email: string,
+  passwordHash: string,
+  sex: "male" | "female" | "other",
+  age: number,
+  heightCm: number,
+  startWeightKg: number,
+  goal: "lose" | "maintain" | "gain",
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+### Daily Log Model
+```typescript
+{
+  _id: ObjectId,
+  userId: ObjectId,
+  date: string, // YYYY-MM-DD
+  foods: [{
+    name: string,
+    qty: number,
+    calories: number,
+    protein?: number,
+    carbs?: number,
+    fat?: number
+  }],
+  workouts: [{
+    type: string,
+    durationMin: number,
+    caloriesBurned: number
+  }],
+  waterMl: number,
+  body?: {
+    weightKg: number,
+    waistCm?: number,
+    hipCm?: number
+  },
+  derived: {
+    bmi: number,
+    whr?: number,
+    whtr?: number,
+    caloriesIn: number,
+    caloriesOut: number
+  },
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+## 🧮 Health Metrics
+
+The API automatically calculates various health indicators:
+
+### BMI (Body Mass Index)
+```typescript
+BMI = weight(kg) / height(m)²
+```
+
+### WHR (Waist-to-Hip Ratio)
+```typescript
+WHR = waist(cm) / hip(cm)
+```
+
+### WHtR (Waist-to-Height Ratio)
+```typescript
+WHtR = waist(cm) / height(cm)
+```
+
+### BMR (Basal Metabolic Rate) - Mifflin-St Jeor Equation
+```typescript
+// Males: BMR = 10 × weight(kg) + 6.25 × height(cm) - 5 × age + 5
+// Females: BMR = 10 × weight(kg) + 6.25 × height(cm) - 5 × age - 161
+```
+
+### TDEE (Total Daily Energy Expenditure)
+```typescript
+TDEE = BMR × Activity Factor
+// Sedentary: 1.2, Light: 1.375, Moderate: 1.55, Active: 1.725, Very Active: 1.9
+```
+
+**⚠️ Important Medical Disclaimer:**
+All health indicators provided by this API are for general wellness guidance only and are not medical advice. Users should consult healthcare professionals for personalized health recommendations.
+
+## 🧪 Testing
+
+### Run Unit Tests
+```bash
+npm test
+```
+
+### Run Tests with Coverage
+```bash
+npm run test -- --coverage
+```
+
+### Test Specific Files
+```bash
+npm test -- metrics.test.ts
+```
+
+### Postman Collection
+Import the Postman collection from `postman/Fitness-Buddy-API.postman_collection.json` to test all endpoints with sample data.
+
+## 🛠️ Development
+
+### Available Scripts
+
+```bash
+# Development server with hot reload
+npm run dev
+
+# Build TypeScript to JavaScript
+npm run build
+
+# Start production server
+npm start
+
+# Run tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Lint code
+npm run lint
+
+# Fix linting issues
+npm run lint:fix
+```
+
+### Environment Variables
+
+Create a `.env` file based on `.env.example`:
+
+```env
+# Database
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/fitness-buddy
+
+# Authentication
+JWT_SECRET=your-super-secret-jwt-key-here-make-it-long-and-random
+JWT_EXPIRES_IN=7d
+
+# Server
+PORT=5000
+NODE_ENV=development
+
+# CORS
+CORS_ORIGIN=http://localhost:5173
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+```
+
+### Code Quality
+
+The project uses:
+- **TypeScript** for type safety
+- **ESLint** for code linting
+- **Jest** for unit testing
+- **Zod** for runtime validation
+- **Mongoose** for MongoDB object modeling
+
+## 🚀 Deployment
+
+### Option 1: Render (Recommended)
+
+1. **Create Render Account**
+   - Go to [Render](https://render.com) and sign up
+
+2. **Create New Web Service**
+   - Connect your GitHub repository
+   - Choose "Web Service"
+   - Configure build and start commands:
+     ```
+     Build Command: npm install && npm run build
+     Start Command: npm start
+     ```
+
+3. **Set Environment Variables**
+   - Add all variables from your `.env` file
+   - Make sure `NODE_ENV=production`
+
+4. **Deploy**
+   - Render will automatically deploy your API
+   - Your API will be available at `https://your-app-name.onrender.com`
+
+### Option 2: Railway
+
+1. **Create Railway Account**
+   - Go to [Railway](https://railway.app) and sign up
+
+2. **Deploy from GitHub**
+   - Click "Deploy from GitHub repo"
+   - Select your repository
+   - Railway will auto-detect Node.js
+
+3. **Configure Environment**
+   - Add environment variables in the Railway dashboard
+   - Set `NODE_ENV=production`
+
+4. **Custom Domain (Optional)**
+   - Configure custom domain in Railway settings
+
+### Option 3: Heroku
+
+1. **Install Heroku CLI**
+   ```bash
+   npm install -g heroku
+   ```
+
+2. **Login and Create App**
+   ```bash
+   heroku login
+   heroku create fitness-buddy-api
+   ```
+
+3. **Set Environment Variables**
+   ```bash
+   heroku config:set MONGODB_URI=your-mongodb-uri
+   heroku config:set JWT_SECRET=your-jwt-secret
+   heroku config:set NODE_ENV=production
+   ```
+
+4. **Deploy**
+   ```bash
+   git push heroku main
+   ```
+
+### Option 4: Docker
+
+1. **Create Dockerfile**
+   ```dockerfile
+   FROM node:18-alpine
+   WORKDIR /app
+   COPY package*.json ./
+   RUN npm ci --only=production
+   COPY . .
+   RUN npm run build
+   EXPOSE 5000
+   CMD ["npm", "start"]
+   ```
+
+2. **Build and Run**
+   ```bash
+   docker build -t fitness-buddy-api .
+   docker run -p 5000:5000 --env-file .env fitness-buddy-api
+   ```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+**MongoDB Connection Failed**
+```bash
+# Check your connection string
+# Ensure IP whitelist includes your server IP
+# Verify database user credentials
+```
+
+**JWT Token Issues**
+```bash
+# Ensure JWT_SECRET is at least 32 characters
+# Check token expiration settings
+# Verify Authorization header format: "Bearer <token>"
+```
+
+**Validation Errors**
+```bash
+# Check request body matches Zod schemas
+# Ensure all required fields are provided
+# Verify data types match schema requirements
+```
+
+**Rate Limiting**
+```bash
+# Adjust RATE_LIMIT_WINDOW_MS and RATE_LIMIT_MAX_REQUESTS
+# Implement user-specific rate limiting if needed
+```
+
+### Debug Mode
+
+Enable detailed logging:
+```env
+NODE_ENV=development
+```
+
+### Health Check
+
+Verify API status:
+```bash
+curl https://your-api-url.com/health
+```
+
+## 📈 Performance Optimization
+
+### Database Indexing
+- User email index for fast authentication
+- Compound index on userId + date for daily logs
+- Date range index for historical queries
+
+### Caching Strategies
+- Implement Redis for session storage
+- Cache frequently accessed user profiles
+- Use MongoDB aggregation for complex queries
+
+### Security Best Practices
+- Regular dependency updates
+- Environment variable validation
+- Request size limiting
+- SQL injection prevention (NoSQL injection)
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these guidelines:
+
+1. **Fork the repository**
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. **Write tests** for new functionality
+4. **Ensure all tests pass**
+   ```bash
+   npm test
+   ```
+5. **Commit your changes**
+   ```bash
+   git commit -m 'Add amazing feature'
+   ```
+6. **Push to the branch**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+7. **Open a Pull Request**
+
+### Development Guidelines
+
+- Follow TypeScript best practices
+- Write comprehensive tests
+- Use meaningful commit messages
+- Update documentation as needed
+- Ensure backward compatibility
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Express.js** - Fast, unopinionated web framework
+- **MongoDB** - Flexible, document-based database
+- **Mongoose** - Elegant MongoDB object modeling
+- **Zod** - TypeScript-first schema validation
+- **JWT** - Secure token-based authentication
+- **bcrypt** - Secure password hashing
+
+## 📞 Support
+
+If you need help or have questions:
+
+- **GitHub Issues** - [Create an issue](https://github.com/yourusername/fitness-buddy-api/issues)
+- **Documentation** - Check this README and inline code comments
+- **API Testing** - Use the provided Postman collection
+
+## 🔮 Future Enhancements
+
+- **Real AI Integration** - OpenAI GPT integration for advanced coaching
+- **Push Notifications** - Reminder and achievement notifications
+- **Social Features** - Friend connections and challenges
+- **Advanced Analytics** - Machine learning insights
+- **Wearable Integration** - Fitbit, Apple Watch, Garmin sync
+- **Meal Planning** - AI-powered meal recommendations
+- **Progress Photos** - Image upload and comparison
+- **Export Features** - PDF reports and data export
+
+---
+
+**Made with ❤️ for fitness enthusiasts everywhere**
+
+*Remember: This API provides general wellness guidance only. Always consult healthcare professionals for medical advice.*
