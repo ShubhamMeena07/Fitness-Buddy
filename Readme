@@ -118,7 +118,7 @@ The API will be running at `http://localhost:5000` 🎉
 
 6. **Update Environment Variables**
    ```env
-   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/fitness-buddy?retryWrites=true&w=majority
+   MONGODB_URL:****************************************************************
    ```
 
 ## 📁 Project Structure
@@ -329,7 +329,7 @@ Create a `.env` file based on `.env.example`:
 
 ```env
 # Database
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/fitness-buddy
+MONGODB_URI=*****************************************
 
 # Authentication
 JWT_SECRET=your-super-secret-jwt-key-here-make-it-long-and-random
@@ -574,3 +574,4 @@ If you need help or have questions:
 **Made with ❤️ for fitness enthusiasts everywhere**
 
 *Remember: This API provides general wellness guidance only. Always consult healthcare professionals for medical advice.*
+
